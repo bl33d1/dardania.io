@@ -4,6 +4,9 @@ let map;
 let wait = 1000;
 let time;
 
+let isClicked = false;
+let v0;
+let v1;
 
 function preload(){
   map = loadImage('assets/kosovomap.png');
@@ -31,6 +34,16 @@ function draw(){
     regions[i].show();
   }
 
+  if(mouseIsPressed && v0.x != 0){
+    let v1 = createVector(mouseX, mouseY);
+    //drawArrow(v0, v1, 'white');
+    fill(255)
+    strokeWeight(4);
+    stroke(255)
+    line(v0.x, v0.y, mouseX, mouseY);
+    
+  }
+  
   
  
   let ms = millis();
@@ -47,16 +60,27 @@ function draw(){
 let startingRegion;
 
 function mousePressed() {
+  let x;
+  let y;
   for (let i = 0; i < regions.length; i++) {
     if (regions[i].contains(mouseX+20, mouseY+20)) {
-      regions[i].select();
-      console.log(regions[i].units);
+      //console.log(regions[i].units);
       startingRegion = i;
+      if(regions[i].team){
+        x = regions[i].x
+        y = regions[i].y
+      }
     }
   } 
+  
+  v0 = createVector(x,y);
+
 }
 
 function mouseReleased(){
+  if(!regions[startingRegion].team){
+    return;
+  }
   for (let i = 0; i < regions.length; i++) {
     if (regions[i].contains(mouseX+20, mouseY+20) && 
     (regions[startingRegion].id != regions[i].id)) {
@@ -76,7 +100,7 @@ function mouseReleased(){
       
       regions[startingRegion].units = 0;
     }
-  } 
+  }
 }
 
 function checkForWinner(){
@@ -90,11 +114,11 @@ function drawArrow(base, vec, myColor) {
   stroke(myColor);
   strokeWeight(3);
   fill(myColor);
-  translate(base.x, base.y);
-  line(0, 0, vec.x, vec.y);
-  rotate(vec.heading());
-  let arrowSize = 7;
-  translate(vec.mag() - arrowSize, 0);
-  triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+  //translate();
+  line(base.x, base.y, vec.x, vec.y);
+  //rotate(vec.heading());
+  //let arrowSize = 15;
+  //translate(vec.mag() - arrowSize, 0);
+  //triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
   pop();
 }
